@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:satta_chat/Screens/partic_group.dart';
+import 'package:satta_chat/Screens/profile_ui.dart';
 
 class GroupChattingScreen extends StatefulWidget {
   const GroupChattingScreen({super.key , required this.name  ,required this.image});
@@ -61,7 +63,9 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                   backgroundImage: widget.image,
                 ),
                 SizedBox(width: 10,),
-                Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold )),
+                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUi() )),
+                  child:Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold ),),
+                )
               ],
             ),
             actions: [
@@ -88,7 +92,9 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                       )),
                       PopupMenuItem(child: ListTile(
                         title: Text('Add Group Admin',style: TextStyle(color: Colors.amber)),
-                        onTap: (){},
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Participants(),));
+                        },
                       )),
                       PopupMenuItem(child: ListTile(
                         title: Text('Delete Group ',style: TextStyle(color: Colors.amber)),

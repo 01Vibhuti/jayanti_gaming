@@ -1,16 +1,18 @@
-
 import 'dart:io';
-
+//import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:satta_chat/Screens/name_change.dart';
+import 'package:satta_chat/Screens/profile_ui.dart';
+import 'package:satta_chat/widgets/emoji_widget.dart';
 
 class ChattingScreen extends StatefulWidget {
-  const ChattingScreen({Key? key, required this.name, required this.image}) : super(key: key);
+  ChattingScreen({Key? key, required this.name, required this.image}) : super(key: key);
 
   final String name;
   final image;
@@ -22,6 +24,9 @@ class ChattingScreen extends StatefulWidget {
 class _ChattingScreenState extends State<ChattingScreen> {
   File? selectedImage;
   String filePath = "";
+  bool emojiShowing = false;
+
+
   List<ChatMessage> messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -71,13 +76,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   backgroundImage: AssetImage(widget.image),
                 ),
                 SizedBox(width: 5),
-                Text(
-                  widget.name,
-                  style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUi() )),
+                  child:Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold ),),
                 ),
               ],
             ),
@@ -204,23 +204,47 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
+
                       child: Row(
                         children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.emoji_emotions_rounded, color: Colors.amber),
-                          ),
+                          //if(emojiShowing)
+                            //EmojisWidget(addEmojiToTextController: addEmojiToTextController),
                           IconButton(
                             onPressed: _pickDocument,
                             icon: Icon(Icons.attach_file_sharp, color: Colors.amber),
                           ),
                           Expanded(
-                            child: TextField(
+                            child:
+                            TextField(
                               controller: _textEditingController,
+
                               style: TextStyle(color: Colors.white),
                               keyboardType: TextInputType.multiline,
                               maxLines: null, // Allows multiple lines
                               decoration: InputDecoration(
+                                prefixIcon: GestureDetector(
+                                  onTap: () async {
+                                    if(emojiShowing){
+                                      setState(() {
+                                        emojiShowing =false;
+                                      });
+                                      await Future.delayed(Duration(milliseconds: 500)).then(
+                                          (value) async{
+                                            await SystemChannels.textInput.invokeMethod("TextInput.show");
+                                          },
+                                      );
+                                    }
+                                    else{
+                                      await SystemChannels.textInput.invokeMethod("TextInput.hide");
+                                      setState(() {
+                                        emojiShowing = true;
+                                      });
+
+                                    }
+                                  },
+                                  child: Icon(emojiShowing ? Icons.keyboard : Icons.emoji_emotions_rounded,
+                                    color: Colors.amber,),
+                                ),
                                 hintText: 'Text Now...',
                                 labelStyle: TextStyle(color: Colors.white),
                                 hintStyle: TextStyle(color: Colors.white, fontSize: 17),
@@ -256,6 +280,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
     );
   }
+
   Future imagePickerCamera()async{
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
     CroppedFile? croppedFile = await ImageCropper().cropImage(
@@ -275,6 +300,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
     });
   }
+  // Widget showEmojiPicker() {
+  //   return EmojiPicker(
+  //
+  //     onEmojiSelected: (category, emoji){
+  //       print(emoji);
+  //     });
+
+  // addEmojiToTextController({required Emoji emoji}) {
+  //
+  // }
 }
 
 class ChatMessage {

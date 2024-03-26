@@ -9,66 +9,65 @@ class HomeUi extends StatefulWidget {
 }
 
 class _HomeUiState extends State<HomeUi> {
+  bool _isSearching = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: Text('HOME UI', style: TextStyle(fontSize: 50,color: Colors.amber),
-        ),
-        actions: [
-          IconButton(onPressed:(){
-            showSearch(context: context, delegate: MySearchDelegate());
-          } , icon: Icon(
-            Icons.search,color: Colors.amber,
-          ))
-        ],
+      appBar: _isSearching ? _buildSearchAppBar() : _buildNormalAppBar(),
+      body: Center(
+        child: Text('Your Content Here'),
       ),
     );
   }
-}
 
-class MySearchDelegate extends SearchDelegate {
-  @override
-  List<Widget>? buildActions(BuildContext context) =>
-      [
-        IconButton(onPressed: () {
-          if(query.isEmpty){
-            close(context, null);
-          }
-          else{
-            query='';
-          }
-        }, icon: Icon(
-          Icons.clear),)
-      ];
-
-  @override
-  Widget? buildLeading(BuildContext context) => IconButton(
-      onPressed: () {}, icon: Icon(
-    Icons.arrow_back),);
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    throw UnimplementedError();
+  PreferredSizeWidget _buildNormalAppBar() {
+    return AppBar(
+      title: Text('Search Demo'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            setState(() {
+              _isSearching = true;
+            });
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.settings),
+          onPressed: () {
+            // Handle settings action
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.info),
+          onPressed: () {
+            // Handle info action
+          },
+        ),
+      ],
+    );
   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> suggestions = [
-      'Rivaan Ranawat',
-    ];
-    return ListView.builder(
-      itemCount : suggestions.length,
-     itemBuilder: (context, index){
-        final suggestion = suggestions[index];
-        return ListTile(
-          title: Text(suggestion),
-          onTap: (){
-
-          },
-        )
-     });
+  PreferredSizeWidget _buildSearchAppBar() {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          setState(() {
+            _isSearching = false;
+          });
+        },
+      ),
+      title: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search...',
+          border: InputBorder.none,
+        ),
+        onChanged: (value) {
+          // Perform search operation
+        },
+      ),
+    );
   }
 }

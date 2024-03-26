@@ -77,14 +77,3 @@ class _NameChangeState extends State<NameChange> {
     );
   }
 }
-//onPressed: () => { showDialog<String>(
-//                       context: context, builder: (BuildContext context) => AlertDialog(
-//                     content: Text('Your changes have not been saved.'),
-//                     actions: <Widget> [
-//                       TextButton(onPressed: () => Navigator.pop(context, 'Discard'), child: Text('Discard')),
-//                       TextButton(onPressed: () => Navigator.pop(context, 'Save'), child: Text('Save'))
-//                     ],
-//                   )
-//
-//                   )
-//                   },
