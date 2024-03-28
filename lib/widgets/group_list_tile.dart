@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:satta_chat/Screens/group_chatscreen.dart';
 import 'package:satta_chat/Screens/partic_group.dart';
 import 'package:satta_chat/group_info.dart';
+import 'package:satta_chat/info.dart';
 
 import '../Screens/chatting_screen.dart';
 
@@ -56,7 +57,7 @@ class _GroupListState extends State<GroupList> {
                         MaterialPageRoute(
                           builder: (context) =>
                               GroupChattingScreen(
-                                image: NetworkImage(groupinfo[index]['profilepic'].toString()),
+                                image: info[index]['profilePic'].toString(),
                                 name: groupinfo[index]['name'].toString(),),
                         ),
                       );

@@ -3,10 +3,11 @@ import 'package:satta_chat/info.dart';
 import 'package:satta_chat/Screens/chatting_screen.dart';
 
 class ContactTile extends StatefulWidget {
+  final String data;
 
 
 
-  const ContactTile({super.key, });
+  const ContactTile({super.key, required this.data, });
 
 
   @override
@@ -29,7 +30,7 @@ class _ContactTileState extends State<ContactTile> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) =>  ChattingScreen(image: ('me.png'), name: info[index]['name'].toString(),),
+                      builder: (context) =>  ChattingScreen(image: info[index]['profilePic'].toString(), name: info[index]['name'].toString(), data: widget.data!),
                     ),
                   );
                 },

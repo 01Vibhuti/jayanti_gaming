@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:satta_chat/Screens/home_ui.dart';
 import 'package:satta_chat/Screens/profile_ui.dart';
-import 'package:satta_chat/info.dart';
 import 'package:satta_chat/widgets/contact_list_tile.dart';
 import 'package:satta_chat/widgets/group_list_tile.dart';
 
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final String image;
+  final String name;
+  final String data;
+  const MainPage({super.key, required this.image, required this.name, required this.data});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -29,7 +31,7 @@ class _MainPageState extends State<MainPage> {
 
             body: TabBarView(
               children: [
-                ContactTile(),
+                ContactTile(data: '',),
                 GroupList()
               ],
             )
@@ -150,7 +152,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 onPressed: (){
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfileUi()) );
+                      MaterialPageRoute(builder: (context) => ProfileUi(image: widget.image, name: widget.name, data: widget.data,)) );
                 },
               ),
             ),

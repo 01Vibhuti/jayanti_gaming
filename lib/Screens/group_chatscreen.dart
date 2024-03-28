@@ -6,14 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:satta_chat/Screens/group_icon.dart';
 import 'package:satta_chat/Screens/partic_group.dart';
 import 'package:satta_chat/Screens/profile_ui.dart';
+import 'package:satta_chat/info.dart';
 
 class GroupChattingScreen extends StatefulWidget {
   const GroupChattingScreen({super.key , required this.name  ,required this.image});
 
   final String name;
-  final image;
+  final String image;
 
   @override
   State<GroupChattingScreen> createState() => _GroupChattingScreen();
@@ -60,10 +62,12 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
               children: [
                 CircleAvatar(
                   radius: 18.0,
-                  backgroundImage: widget.image,
+                  backgroundImage: NetworkImage(widget.image),
                 ),
                 SizedBox(width: 10,),
-                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUi() )),
+                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => GroupIcon(image: widget.image, name: widget.name,data: "",
+                    ) )),
                   child:Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold ),),
                 )
               ],

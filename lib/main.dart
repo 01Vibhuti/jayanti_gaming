@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'Screens/mian_page.dart';
 
 void main(){
+
   runApp(MyApp());
 }
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "satta chat app",
-      home: MainPage(),
+      home: MainPage(image: '', name: '', data: '',),
     );
   }
 }

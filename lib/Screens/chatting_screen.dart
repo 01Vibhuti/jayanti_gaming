@@ -12,10 +12,12 @@ import 'package:satta_chat/Screens/profile_ui.dart';
 import 'package:satta_chat/widgets/emoji_widget.dart';
 
 class ChattingScreen extends StatefulWidget {
-  ChattingScreen({Key? key, required this.name, required this.image}) : super(key: key);
+  ChattingScreen({Key? key, required this.name, required this.image, required this.data}) : super(key: key);
 
   final String name;
-  final image;
+  final String image;
+  final String data;
+
 
   @override
   State<ChattingScreen> createState() => _ChattingScreenState();
@@ -73,10 +75,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
               children: [
                 CircleAvatar(
                   radius: 18.0,
-                  backgroundImage: AssetImage(widget.image),
+                  backgroundImage: NetworkImage(widget.image),
                 ),
                 SizedBox(width: 5),
-                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUi() )),
+                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => ProfileUi(image: widget.image, name: widget.name, data: widget.data) )),
                   child:Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold ),),
                 ),
               ],
@@ -172,23 +175,27 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
-                    return ListTile(
-                      title: Container(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
-                            minWidth: 0, // Allow minimum width
-                          ),
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.amber),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text
-                            (message.text, style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
-                      leading: message.file != null ? Icon(Icons.attach_file) : null,
-                      onTap: () {
-                        // Handle file tap if needed
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 100.0,left: 8),
+                      child: GestureDetector(
+                        onLongPress: () {
+                          print('Trigger me when user presses me for like 3 seconds');
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Container(
+                             height: MediaQuery.of(context).size.height*0.055,
+                              width:20,
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.amber),
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.green
+                              ),
+                              child: Text
+                                (message.text, style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -217,34 +224,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             child:
                             TextField(
                               controller: _textEditingController,
-
                               style: TextStyle(color: Colors.white),
                               keyboardType: TextInputType.multiline,
                               maxLines: null, // Allows multiple lines
                               decoration: InputDecoration(
-                                prefixIcon: GestureDetector(
-                                  onTap: () async {
-                                    if(emojiShowing){
-                                      setState(() {
-                                        emojiShowing =false;
-                                      });
-                                      await Future.delayed(Duration(milliseconds: 500)).then(
-                                          (value) async{
-                                            await SystemChannels.textInput.invokeMethod("TextInput.show");
-                                          },
-                                      );
-                                    }
-                                    else{
-                                      await SystemChannels.textInput.invokeMethod("TextInput.hide");
-                                      setState(() {
-                                        emojiShowing = true;
-                                      });
-
-                                    }
-                                  },
-                                  child: Icon(emojiShowing ? Icons.keyboard : Icons.emoji_emotions_rounded,
-                                    color: Colors.amber,),
-                                ),
                                 hintText: 'Text Now...',
                                 labelStyle: TextStyle(color: Colors.white),
                                 hintStyle: TextStyle(color: Colors.white, fontSize: 17),
