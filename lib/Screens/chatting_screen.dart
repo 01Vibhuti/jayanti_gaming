@@ -1,5 +1,4 @@
 import 'dart:io';
-//import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:satta_chat/Screens/name_change.dart';
 import 'package:satta_chat/Screens/profile_ui.dart';
-import 'package:satta_chat/widgets/emoji_widget.dart';
 
 class ChattingScreen extends StatefulWidget {
   ChattingScreen({Key? key, required this.name, required this.image, required this.data}) : super(key: key);
@@ -27,6 +25,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   File? selectedImage;
   String filePath = "";
   bool emojiShowing = false;
+
 
 
   List<ChatMessage> messages = [];
@@ -57,6 +56,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -125,9 +125,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               TextButton(
                                   onPressed: () => Navigator.of(context).pop(),
                                   child: Text('Cancel')),
-                              TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: Text('OK')),
+                              TextButton(onPressed: () {
+                                setState(() {
+                                  messages.clear();
+                                });
+                                Navigator.of(context).pop();
+
+                              }, child: Text('ok'),
+
+                                     ),
 
                             ],
                           );
@@ -163,7 +169,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           ],
           elevation: 10,
         ),
-        body: Container(
+        body:
+        Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           color: Colors.blueGrey,
@@ -177,25 +184,62 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     final message = messages[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 100.0,left: 8),
-                      child: GestureDetector(
-                        onLongPress: () {
-                          print('Trigger me when user presses me for like 3 seconds');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: GestureDetector(
+                          onLongPress: (){
+                            showDialog(context: context, builder: (context){
+                              return AlertDialog(
+                                backgroundColor: Colors.black,
+                                title: Text(''),
+                                content: Text('Perform Action?',
+                                style: TextStyle(
+                                  color: Colors.amber
+                                ),),
+                                actions: <Widget>[
+                                  TextButton(onPressed: () {
+                                    Navigator.pop(context);
+                                    Clipboard.setData(ClipboardData(text: message.text));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text('Message copied'),
+
+                                    ));
+
+                                  }, child: Text('copy')),
+                                  TextButton(
+                                    onPressed: () {
+
+                                      setState(() {
+                                        messages.removeAt(index);
+                                      });
+                                      Navigator.of(context).pop();
+                                       // Close the AlertDialog
+                                    },
+                                    child: Text('OK'),
+                                  ),
+
+                                ],
+                              );
+                            });
+                          },
                           child: Container(
-                             height: MediaQuery.of(context).size.height*0.055,
+                             //height: MediaQuery.of(context).size.height*0.055,
                               width:20,
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.amber),
                                 borderRadius: BorderRadius.circular(8),
-                                color: Colors.green
+
                               ),
-                              child: Text
-                                (message.text, style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
-                        ),
-                      ),
+                              child: Row(
+                                children: [
+                                  Text
+                                    (message.text,  style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),),
+
+
+                                ],
+                              )),
+                        ),                      ),
                     );
                   },
                 ),
@@ -294,6 +338,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
   //
   // }
 }
+
+
 
 class ChatMessage {
   final String text;

@@ -140,7 +140,7 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                       return ListTile(
                         title: Container(
                             constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                             // maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
                               minWidth: 0, // Allow minimum width
                             ),
                             padding: EdgeInsets.all(8),
@@ -170,10 +170,6 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                       Expanded(
                         child: Row(
                           children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.emoji_emotions_rounded, color: Colors.amber),
-                            ),
                             IconButton(
                               onPressed: _pickDocument,
                               icon: Icon(Icons.attach_file_sharp, color: Colors.amber),

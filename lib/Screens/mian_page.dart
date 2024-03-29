@@ -32,7 +32,8 @@ class _MainPageState extends State<MainPage> {
             body: TabBarView(
               children: [
                 ContactTile(data: '',),
-                GroupList()
+                GroupList(),
+
               ],
             )
         )
@@ -160,9 +161,11 @@ class _MainPageState extends State<MainPage> {
         ],
         bottom: TabBar(
           indicatorColor: Colors.amber,
-          indicatorWeight: 4,
+          indicatorWeight: 10,
           labelColor: Colors.amber,
+
           unselectedLabelColor: Colors.grey,
+
 
           labelStyle: TextStyle(fontWeight: FontWeight.bold , fontSize: 20),
           tabs: [
