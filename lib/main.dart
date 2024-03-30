@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Screens/chatting_screen.dart';
+import 'Screens/columntest.dart';
 import 'Screens/mian_page.dart';
 
 void main(){
@@ -15,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "satta chat app",
-      home: MainPage(image: '', name: '', data: '',),
+      //home: TextHistory(),
+       home: MainPage(image: '', name: '', data: '',),
     );
   }
 }

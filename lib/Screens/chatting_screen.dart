@@ -23,16 +23,17 @@ class ChattingScreen extends StatefulWidget {
 
 class _ChattingScreenState extends State<ChattingScreen> {
   File? selectedImage;
+  File? _pickedImage;
   String filePath = "";
   bool emojiShowing = false;
-
 
 
   List<ChatMessage> messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
   void _pickDocument() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true);
 
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
@@ -56,7 +57,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -78,9 +78,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   backgroundImage: NetworkImage(widget.image),
                 ),
                 SizedBox(width: 5),
-                TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ProfileUi(image: widget.image, name: widget.name, data: widget.data) )),
-                  child:Text(widget.name, style: TextStyle(color: Colors.amber , fontSize: 20 , fontWeight: FontWeight.bold ),),
+                TextButton(onPressed: () =>
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileUi(image: widget.image,
+                                name: widget.name,
+                                data: widget.data))),
+                  child: Text(widget.name, style: TextStyle(color: Colors.amber,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),),
                 ),
               ],
             ),
@@ -97,14 +103,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 return <PopupMenuEntry>[
                   PopupMenuItem(
                     child: ListTile(
-                      title: Text('Name Change', style: TextStyle(color: Colors.amber)),
-                      onTap: () => {
-                        setState((){
+                      title: Text(
+                          'Name Change', style: TextStyle(color: Colors.amber)),
+                      onTap: () =>
+                      {
+                        setState(() {
                           Navigator.pop(context);
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                              NameChange()
-                          ));
-
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) =>
+                                  NameChange()
+                              ));
                         },
 
 
@@ -115,13 +123,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      title: Text('Chat Delete', style: TextStyle(color: Colors.amber)),
+                      title: Text(
+                          'Chat Delete', style: TextStyle(color: Colors.amber)),
                       onTap: () {
-                        showDialog(context: context, builder: (context){
+                        showDialog(context: context, builder: (context) {
                           return AlertDialog(
                             title: Text('Delete this chat?'),
                             content: Text('des'),
-                            actions: <Widget> [
+                            actions: <Widget>[
                               TextButton(
                                   onPressed: () => Navigator.of(context).pop(),
                                   child: Text('Cancel')),
@@ -130,10 +139,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                   messages.clear();
                                 });
                                 Navigator.of(context).pop();
-
                               }, child: Text('ok'),
 
-                                     ),
+                              ),
 
                             ],
                           );
@@ -143,13 +151,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   ),
                   PopupMenuItem(
                     child: ListTile(
-                      title: Text('Block', style: TextStyle(color: Colors.amber)),
+                      title: Text(
+                          'Block', style: TextStyle(color: Colors.amber)),
                       onTap: () {
-                        showDialog(context: context, builder: (context){
+                        showDialog(context: context, builder: (context) {
                           return AlertDialog(
                             title: Text('Block'),
                             content: Text('des'),
-                            actions: <Widget> [
+                            actions: <Widget>[
                               TextButton(
                                   onPressed: () => Navigator.of(context).pop(),
                                   child: Text('Cancel')),
@@ -171,8 +180,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ),
         body:
         Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           color: Colors.blueGrey,
           child: Column(
             children: [
@@ -183,39 +198,39 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     return Padding(
-                      padding: const EdgeInsets.only(right: 100.0,left: 8),
+                      padding: const EdgeInsets.only(right: 100.0, left: 8),
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: GestureDetector(
-                          onLongPress: (){
-                            showDialog(context: context, builder: (context){
+                          onLongPress: () {
+                            showDialog(context: context, builder: (context) {
                               return AlertDialog(
                                 backgroundColor: Colors.black,
                                 title: Text(''),
                                 content: Text('Perform Action?',
-                                style: TextStyle(
-                                  color: Colors.amber
-                                ),),
+                                  style: TextStyle(
+                                      color: Colors.amber
+                                  ),),
                                 actions: <Widget>[
                                   TextButton(onPressed: () {
                                     Navigator.pop(context);
-                                    Clipboard.setData(ClipboardData(text: message.text));
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                      content: Text('Message copied'),
+                                    Clipboard.setData(
+                                        ClipboardData(text: message.text));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Message copied'),
 
-                                    ));
-
+                                        ));
                                   }, child: Text('copy')),
                                   TextButton(
                                     onPressed: () {
-
                                       setState(() {
                                         messages.removeAt(index);
                                       });
                                       Navigator.of(context).pop();
-                                       // Close the AlertDialog
+                                      // Close the AlertDialog
                                     },
-                                    child: Text('OK'),
+                                    child: Text('Remove'),
                                   ),
 
                                 ],
@@ -223,33 +238,39 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             });
                           },
                           child: Container(
-                             //height: MediaQuery.of(context).size.height*0.055,
-                              width:20,
-                              padding: EdgeInsets.all(10),
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width * 0.5, // Max width 50% of screen
+                                minWidth: 0, // Allow minimum width
+                              ),
+                              padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.amber),
                                 borderRadius: BorderRadius.circular(8),
-
                               ),
-                              child: Row(
-                                children: [
-                                  Text
-                                    (message.text,  style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),),
 
-
-                                ],
-                              )),
-                        ),                      ),
+                              child: Text(message.text, style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),)),
+                        ),),
                     );
                   },
                 ),
               ),
               Container(
                 height: 50,
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 decoration: BoxDecoration(
                   color: Colors.black,
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0)),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10.0),
+                      topLeft: Radius.circular(10.0)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,10 +280,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       child: Row(
                         children: [
                           //if(emojiShowing)
-                            //EmojisWidget(addEmojiToTextController: addEmojiToTextController),
+                          //EmojisWidget(addEmojiToTextController: addEmojiToTextController),
                           IconButton(
                             onPressed: _pickDocument,
-                            icon: Icon(Icons.attach_file_sharp, color: Colors.amber),
+                            icon: Icon(
+                                Icons.attach_file_sharp, color: Colors.amber),
                           ),
                           Expanded(
                             child:
@@ -270,11 +292,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               controller: _textEditingController,
                               style: TextStyle(color: Colors.white),
                               keyboardType: TextInputType.multiline,
-                              maxLines: null, // Allows multiple lines
+                              maxLines: null,
+                              // Allows multiple lines
                               decoration: InputDecoration(
                                 hintText: 'Text Now...',
                                 labelStyle: TextStyle(color: Colors.white),
-                                hintStyle: TextStyle(color: Colors.white, fontSize: 17),
+                                hintStyle: TextStyle(
+                                    color: Colors.white, fontSize: 17),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -285,12 +309,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     Expanded(
                       child: Row(
                         children: [
-                          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                          SizedBox(width: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.1),
                           IconButton(
-                            onPressed:imagePickerCamera,
-                            icon: Icon(Icons.camera_alt_sharp, color: Colors.amber),
+                            onPressed: (){_showBottomSheet(context);},
+                            icon: Icon(
+                                Icons.camera_alt_sharp, color: Colors.amber),
                           ),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.mic, color: Colors.amber)),
+                          IconButton(onPressed: () {}, icon: Icon(
+                              Icons.mic, color: Colors.amber)),
                           IconButton(
                             onPressed: _sendMessage,
                             icon: Icon(Icons.send, color: Colors.amber),
@@ -308,37 +337,80 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Future imagePickerCamera()async{
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9,
-        ],
-        sourcePath: returnedImage!.path
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builderContext) {
+        return SingleChildScrollView(
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0),
+            ),
+            child: Container(
+              color: Colors.white,
+              height: 250,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Pic Image From",
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        pickImage(ImageSource.camera);
+                      },
+                      icon: const Icon(Icons.camera),
+                      label: const Text("CAMERA"),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        pickImage(ImageSource.gallery);
+                      },
+                      icon: const Icon(Icons.image),
+                      label: const Text("GALLERY"),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close),
+                      label: const Text("CANCEL"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
-    if(returnedImage == null)return;
-    setState(() {
-      selectedImage = File(croppedFile!.path);
-      Navigator.of(context).pop();
-
-    });
   }
-  // Widget showEmojiPicker() {
-  //   return EmojiPicker(
-  //
-  //     onEmojiSelected: (category, emoji){
-  //       print(emoji);
-  //     });
 
-  // addEmojiToTextController({required Emoji emoji}) {
-  //
-  // }
+  pickImage(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickImage(source: imageType);
+      if (photo == null) return;
+      final tempImage = File(photo.path);
+      setState(() {
+        _pickedImage = tempImage;
+      });
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
 }
-
 
 
 class ChatMessage {

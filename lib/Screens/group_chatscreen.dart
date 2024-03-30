@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:satta_chat/Screens/group_icon.dart';
 import 'package:satta_chat/Screens/partic_group.dart';
-import 'package:satta_chat/Screens/profile_ui.dart';
-import 'package:satta_chat/info.dart';
 
 class GroupChattingScreen extends StatefulWidget {
   const GroupChattingScreen({super.key , required this.name  ,required this.image});
@@ -137,24 +136,61 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
-                      return ListTile(
-                        title: Container(
-                            constraints: BoxConstraints(
-                             // maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
-                              minWidth: 0, // Allow minimum width
-                            ),
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.amber),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(message.text, style: TextStyle(fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
-                        leading: message.file != null ? Icon(Icons.attach_file) : null,
-                        onTap: () {
-                          // Handle file tap if needed
-                        },
-                      );
-                    },
+                      return
+                        Padding(
+                          padding: const EdgeInsets.only(right: 100.0,left: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: GestureDetector(
+                              onLongPress: (){
+                                showDialog(context: context, builder: (context){
+                                  return AlertDialog(
+                                    backgroundColor: Colors.black,
+                                    title: Text(''),
+                                    content: Text('Perform Action?',
+                                      style: TextStyle(
+                                          color: Colors.amber
+                                      ),),
+                                    actions: <Widget>[
+                                      TextButton(onPressed: () {
+                                        Navigator.pop(context);
+                                        Clipboard.setData(ClipboardData(text: message.text));
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text('Message copied'),
+
+                                        ));
+
+                                      }, child: Text('copy')),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            messages.removeAt(index);
+                                          });
+                                          Navigator.of(context).pop();
+                                          // Close the AlertDialog
+                                        },
+                                        child: Text('Remove'),
+                                      ),
+
+                                    ],
+                                  );
+                                });
+                              },
+                              child: Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                                    minWidth: 0, // Allow minimum width
+                                  ),
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.amber),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+
+                                  child: Text(message.text, style: TextStyle(
+                                      fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
+                            ),),
+                        );},
                   ),
                 ),
                 Container(
