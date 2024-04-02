@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:satta_chat/Screens/name_change.dart';
 import 'package:satta_chat/Screens/profile_ui.dart';
@@ -17,30 +16,37 @@ class ChattingScreen extends StatefulWidget {
   final String data;
 
 
+
   @override
   State<ChattingScreen> createState() => _ChattingScreenState();
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
   File? selectedImage;
-  File? _pickedImage;
   String filePath = "";
+  File? pickedImage;
   bool emojiShowing = false;
+  File? document ;
+  bool isLoading = true;
 
 
   List<ChatMessage> messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
+
   void _pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true);
+    print('Vibhuti ${result}' );
 
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
       for (var file in files) {
-        messages.add(ChatMessage(text: '', file: file));
+
+        messages.add(ChatMessage(text: ' ', file: file, ));
       }
-      setState(() {});
+      print('Data ${files}');
+
     } else {
       // User canceled the picker
     }
@@ -51,7 +57,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
     if (messageText.isNotEmpty) {
       messages.insert(0, ChatMessage(text: messageText));
       _textEditingController.clear();
-      setState(() {});
+      setState(() {
+        isLoading = true;
+      });
     }
   }
 
@@ -221,7 +229,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                           content: Text('Message copied'),
 
                                         ));
-                                  }, child: Text('copy')),
+                                  }, child: Text('copy',style: TextStyle(color: Colors.amber))),
                                   TextButton(
                                     onPressed: () {
                                       setState(() {
@@ -230,7 +238,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                       Navigator.of(context).pop();
                                       // Close the AlertDialog
                                     },
-                                    child: Text('Remove'),
+                                    child: Text('Remove',style:TextStyle(color: Colors.amber)),
                                   ),
 
                                 ],
@@ -239,33 +247,42 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           },
                           child: Container(
                               constraints: BoxConstraints(
-                                maxWidth: MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width * 0.5, // Max width 50% of screen
-                                minWidth: 0, // Allow minimum width
+                                maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                                minWidth: 0,
+                                // Allow minimum width
                               ),
-                              padding: EdgeInsets.all(2),
+                              padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.amber),
-                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.black38,
+                                borderRadius: BorderRadius.circular(12),
                               ),
 
-                              child: Text(message.text, style: TextStyle(
+                              child: isLoading == true ?Text(message.text, style: TextStyle(
                                   fontSize: 17,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold),)),
-                        ),),
+                                  fontWeight: FontWeight.bold),):Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                                  minWidth: 0, // Allow minimum width
+                                ),
+                                //color: Colors.black38,
+                                decoration: BoxDecoration(
+                                  color: Colors.black38,
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                //borderRadius: BorderRadius.circular(12),
+                                padding: EdgeInsets.all(6),
+                                child: Image.file(pickedImage!,),
+
+                              ),
+                          )
+                        ),
+                      ),
                     );
                   },
                 ),
               ),
-              Container(
-                height: 50,
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
+              Container(height: 50,width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.only(
@@ -276,19 +293,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-
                       child: Row(
                         children: [
-                          //if(emojiShowing)
-                          //EmojisWidget(addEmojiToTextController: addEmojiToTextController),
                           IconButton(
                             onPressed: _pickDocument,
-                            icon: Icon(
-                                Icons.attach_file_sharp, color: Colors.amber),
+                            icon: Icon(Icons.attach_file_sharp, color: Colors.amber),
                           ),
                           Expanded(
-                            child:
-                            TextField(
+                            child: TextField(
                               controller: _textEditingController,
                               style: TextStyle(color: Colors.white),
                               keyboardType: TextInputType.multiline,
@@ -302,7 +314,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                 border: InputBorder.none,
                               ),
                             ),
-                          )
+                          ),
+                          // Container(
+                          //   height: MediaQuery.of(context).size.height,
+                          //   width:MediaQuery.of(context).size.width,
+                          //   child: Image.file(pickedImage!),
+                          //   decoration: BoxDecoration(
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -337,6 +356,57 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
+  // void _showImagePicker(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return SafeArea(
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: <Widget>[
+  //
+  //         ElevatedButton.icon(
+  //           onPressed: () {
+  //             _pickImage(ImageSource.camera); // or _pickImage(ImageSource.gallery);
+  //           },
+  //
+  //            icon: const Icon(Icons.camera,color: Colors.amber, ),
+  //           label: const Text("CAMERA", style: TextStyle(color: Colors.black) ),
+  //         ),
+  //             ElevatedButton.icon(
+  //               onPressed: ()  {
+  //                 Navigator.pop(context);
+  //                 _pickImage(ImageSource.gallery);
+  //
+  //               },
+  //               icon: const Icon(Icons.image,color: Colors.amber,),
+  //               label: const Text("GALLERY", style: TextStyle(color: Colors.black ) ),
+  //             ),
+  //             const SizedBox(
+  //               height: 10,
+  //             ),
+  //             ElevatedButton.icon(
+  //               onPressed: ()  {
+  //                 _showImagePicker == null
+  //                     ? Text('No image selected.')
+  //                     : Image.file(File(_showImagePicker as String));
+  //
+  //                 _showImagePicker(context);
+  //
+  //                 setState(() {
+  //                   Navigator.pop(context);
+  //                 });
+  //               },
+  //               icon: const Icon(Icons.close,color: Colors.red),
+  //               label: const Text("CANCEL", style: TextStyle(color: Colors.black),),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -366,17 +436,23 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        pickImage(ImageSource.camera);
+                        setState(() {
+                          pickImage(ImageSource.camera);
+                        });
+                        Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.camera),
-                      label: const Text("CAMERA"),
+                      icon: const Icon(Icons.camera,color: Colors.amber),
+                      label: const Text('CAMERA',style: TextStyle(color: Colors.black),),
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        pickImage(ImageSource.gallery);
+                        setState(() {
+                          pickImage(ImageSource.gallery);
+                        });
+                        Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.image),
-                      label: const Text("GALLERY"),
+                      icon: const Icon(Icons.image,color: Colors.amber),
+                      label: const Text('GALLERY',style: TextStyle(color: Colors.black)),
                     ),
                     const SizedBox(
                       height: 10,
@@ -385,8 +461,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(Icons.close),
-                      label: const Text("CANCEL"),
+                      icon: const Icon(Icons.close,color: Colors.red,),
+                      label: const Text('CANCEL', style: TextStyle(color: Colors.black),),
                     ),
                   ],
                 ),
@@ -400,16 +476,31 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   pickImage(ImageSource imageType) async {
     try {
-      final photo = await ImagePicker().pickImage(source: imageType);
+      final photo = await ImagePicker().pickImage(source: imageType,);
       if (photo == null) return;
-      final tempImage = File(photo.path);
+      final tempImage = File(photo.path,);
       setState(() {
-        _pickedImage = tempImage;
+        pickedImage = tempImage;
+        isLoading = false;
       });
     } catch (error) {
       debugPrint(error.toString());
     }
   }
+
+
+// pickImage(ImageSource imageType) async {
+  //   try {
+  //     final photo = await ImagePicker().pickImage(source: imageType);
+  //     if (photo == null) return;
+  //     final tempImage = File(photo.path);
+  //     setState(() {
+  //       _pickedImage = tempImage;
+  //     });
+  //   } catch (error) {
+  //     debugPrint(error.toString());
+  //   }
+  // }
 }
 
 

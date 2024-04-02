@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "satta chat app",
-      //home: TextHistory(),
+      //home: ImageShow(),
        home: MainPage(image: '', name: '', data: '',),
     );
   }
