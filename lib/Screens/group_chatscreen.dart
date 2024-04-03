@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:satta_chat/Screens/group_icon.dart';
 import 'package:satta_chat/Screens/partic_group.dart';
@@ -25,13 +23,28 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
   final TextEditingController _textEditingController = TextEditingController();
 
   String filePath = "";
+  bool isLoading = true;
+  File? selectedImage;
+  File? pickedImage;
+  bool emojiShowing = false;
+  File? document ;
+
+
   void _pickDocument() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true);
+    print('Vibhuti ${result}' );
 
     if (result != null) {
-      setState(() {
-        filePath = result.files.single.path!;
-      });
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      for (var file in files) {
+
+        messages.add(ChatMessage(text: ' ', file: file, ));
+      }
+      print('Data ${files}');
+
+    } else {
+      // User canceled the picker
     }
   }
 
@@ -176,19 +189,50 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                                   );
                                 });
                               },
-                              child: Container(
+                              // child: Container(
+                              //     constraints: BoxConstraints(
+                              //       maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                              //       minWidth: 0, // Allow minimum width
+                              //     ),
+                              //     padding: EdgeInsets.all(2),
+                              //     decoration: BoxDecoration(
+                              //       border: Border.all(color: Colors.amber),
+                              //       borderRadius: BorderRadius.circular(8),
+                              //     ),
+                              //
+                              //     child: Text(message.text, style: TextStyle(
+                              //         fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
+                                child: Container(
                                   constraints: BoxConstraints(
                                     maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
-                                    minWidth: 0, // Allow minimum width
+                                    minWidth: 0,
+                                    // Allow minimum width
                                   ),
-                                  padding: EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.amber),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.black38,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
 
-                                  child: Text(message.text, style: TextStyle(
-                                      fontSize: 17 , color: Colors.white,fontWeight: FontWeight.bold),)),
+                                  child: isLoading == true ?Text(message.text, style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),):Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth: MediaQuery.of(context).size.width * 0.5, // Max width 50% of screen
+                                      minWidth: 0, // Allow minimum width
+                                    ),
+                                    //color: Colors.black38,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black38,
+                                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    ),
+                                    //borderRadius: BorderRadius.circular(12),
+                                    padding: EdgeInsets.all(6),
+                                    child: Image.file(pickedImage!,),
+
+                                  ),
+                                )
                             ),),
                         );},
                   ),
@@ -232,7 +276,7 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
                           children: [
                             SizedBox(width: MediaQuery.of(context).size.width * 0.1),
                             IconButton(
-                              onPressed: imagePickerCamera,
+                              onPressed: (){_showBottomSheet(context);},
                               icon: Icon(Icons.camera_alt_sharp, color: Colors.amber),
                             ),
                             IconButton(onPressed: (){}, icon: Icon(Icons.mic, color: Colors.amber)),
@@ -253,26 +297,89 @@ class _GroupChattingScreen extends State<GroupChattingScreen> {
       ),
     );
   }
-  Future imagePickerCamera()async{
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera);
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9,
-        ],
-        sourcePath: returnedImage!.path
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builderContext) {
+        return SingleChildScrollView(
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0),
+            ),
+            child: Container(
+              color: Colors.white,
+              height: 250,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Pic Image From",
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          pickImage(ImageSource.camera);
+                        });
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.camera,color: Colors.amber),
+                      label: const Text('CAMERA',style: TextStyle(color: Colors.black),),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          pickImage(ImageSource.gallery);
+                        });
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.image,color: Colors.amber),
+                      label: const Text('GALLERY',style: TextStyle(color: Colors.black)),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close,color: Colors.red,),
+                      label: const Text('CANCEL', style: TextStyle(color: Colors.black),),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
-    if(returnedImage == null)return;
-    setState(() {
-      SelectedImage = File(croppedFile!.path);
-      Navigator.of(context).pop();
-
-    });
   }
+
+  pickImage(ImageSource imageType) async {
+    try {
+      final photo = await ImagePicker().pickImage(source: imageType,);
+      if (photo == null) return;
+      final tempImage = File(photo.path,);
+      setState(() {
+        pickedImage = tempImage;
+        isLoading = false;
+      });
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
 }
+
 
 
 class ChatMessage {

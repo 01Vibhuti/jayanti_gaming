@@ -33,7 +33,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   List<ChatMessage> messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
-
   void _pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true);
@@ -122,10 +121,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                   NameChange()
                               ));
                         },
-
-
                         ),
-
                       },
                     ),
                   ),
